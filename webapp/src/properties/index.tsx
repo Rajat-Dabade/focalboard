@@ -17,6 +17,7 @@ import DateProperty from './date/property'
 import PersonProperty from './person/property'
 import MultiPersonProperty from './multiperson/property'
 import CheckboxProperty from './checkbox/property'
+import DueDateProperty from './duedate/property'
 import UnknownProperty from './unknown/property'
 
 import {PropertyType} from './types'
@@ -54,6 +55,7 @@ registry.register(new UrlProperty())
 registry.register(new SelectProperty())
 registry.register(new MultiSelectProperty())
 registry.register(new DateProperty())
+registry.register(new DueDateProperty())
 registry.register(new PersonProperty())
 registry.register(new MultiPersonProperty())
 registry.register(new CheckboxProperty())
