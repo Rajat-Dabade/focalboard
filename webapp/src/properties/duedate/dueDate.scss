@@ -3,7 +3,7 @@
         display: flex;
 
         .Editable {
-            width: 50% !important;
+            width: 200px;
         }
     }
 
@@ -32,8 +32,8 @@
 
     .Modal {
         position: absolute;
-        top: 0;
-        left: 0;
+        top: 24px;
+        left: -280px;
         margin-bottom: 100px;
     }
 
@@ -56,6 +56,10 @@
         &:hover {
             background-color: transparent;
         }
+    }
+
+    .add-start-date {
+        width: 50% !important;
     }
 
     .menu-option {
@@ -118,6 +122,10 @@
         padding: 0;
     }
 
+    .DayPicker-Months {
+        flex-flow: row;
+    }
+
     .DayPicker-Month {
         margin: 0;
         margin-top: 1em;
@@ -128,10 +136,6 @@
     .DayPicker-Body {
         display: flex;
         flex-direction: column;
-    }
-
-    .inputContainer {
-        max-width: 252px;
     }
 
     .DayPicker-Weekdays {
@@ -176,6 +180,10 @@
                 color: rgba(var(--button-bg-rgb), 1) !important;
             }
         }
+    }
+
+    .DayPicker-NavButton--prev {
+        left: 0;
     }
 
     .DayPicker-Day--today {

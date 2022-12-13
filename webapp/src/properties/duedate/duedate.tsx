@@ -1,6 +1,6 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
-import React, {useCallback, useMemo, useState} from 'react'
+import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import {useIntl} from 'react-intl'
 import MomentLocaleUtils from 'react-day-picker/moment'
 import DayPicker from 'react-day-picker/DayPicker'
@@ -13,7 +13,7 @@ import {Utils} from '../../utils'
 import {createDatePropertyFromString, DateProperty} from '../date/date'
 
 import {PropertyProps} from '../types'
-import './duedate.scss'
+import './dueDate.scss'
 import ModalWrapper from '../../components/modalWrapper'
 import Modal from '../../components/modal'
 import mutator from '../../mutator'
@@ -27,6 +27,8 @@ const DueDate = (props: PropertyProps): JSX.Element => {
     const {propertyValue, propertyTemplate, showEmptyPlaceholder, readOnly, board, card} = props
     const [value, setValue] = useState(propertyValue)
     const [showDialog, setShowDialog] = useState(false)
+    const [numberOfMonths, setNumberOfMonths] = useState(1)
+
     const intl = useIntl()
 
     const onChange = useCallback((newValue) => {
@@ -73,6 +75,7 @@ const DueDate = (props: PropertyProps): JSX.Element => {
     }
 
     const onRangeClick = () => {
+        setNumberOfMonths(2)
         let range: DateProperty = {
             from: dateTo?.getTime(),
             to: dateTo?.getTime(),
@@ -103,6 +106,12 @@ const DueDate = (props: PropertyProps): JSX.Element => {
     if (dateTo) {
         displayValue = getDisplayDate(dateTo)
     }
+    useEffect(() => {
+        if (dateFrom) {
+            setNumberOfMonths(2)
+        }
+    }, [dateFrom])
+
     if (dateFrom) {
         displayValue = getDisplayDate(dateFrom) + ' → ' + getDisplayDate(dateTo)
     }
@@ -142,6 +151,7 @@ const DueDate = (props: PropertyProps): JSX.Element => {
                             <div className={'inputContainer'}>
                                 <Button
                                     onClick={onRangeClick}
+                                    className='add-start-date'
                                 >
                                     {'+ Add Start date'}
                                 </Button>
@@ -202,6 +212,7 @@ const DueDate = (props: PropertyProps): JSX.Element => {
                                 />
                             </div>
                             <DayPicker
+                                numberOfMonths={numberOfMonths}
                                 onDayClick={handleDayClick}
                                 initialMonth={dateFrom || new Date()}
                                 showOutsideDays={false}
