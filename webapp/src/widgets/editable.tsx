@@ -1,8 +1,10 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 import React, {forwardRef, useImperativeHandle, useLayoutEffect, useRef} from 'react'
+import Button from './buttons/button'
 
 import './editable.scss'
+import CompassIcon from './icons/compassIcon'
 
 export type EditableProps = {
     onChange: (value: string) => void
@@ -18,6 +20,7 @@ export type EditableProps = {
     onCancel?: () => void
     onSave?: (saveType: 'onEnter'|'onEsc'|'onBlur') => void
     onFocus?: () => void
+    onClear?: () => void
 }
 
 export type Focusable = {
@@ -37,6 +40,8 @@ export type ElementProps = {
     readOnly?: boolean
     spellCheck?: boolean
     onFocus?: () => void
+    onClear?: () => void
+    type?: string
 }
 
 export function useEditable(
@@ -113,6 +118,8 @@ export function useEditable(
         readOnly: readonly,
         spellCheck: props.spellCheck,
         onFocus: props.onFocus,
+        onClear: props.onClear,
+        type: props.onClear ? 'search' : 'text',
     }
 }
 
@@ -128,10 +135,22 @@ const Editable = (props: EditableProps, ref: React.Ref<Focusable>): JSX.Element 
     })
 
     return (
-        <input
-            {...elementProps}
-            ref={elementRef}
-        />
+        <>
+            <input
+                {...elementProps}
+                ref={elementRef}
+            />
+            {props.onClear &&
+                <span
+                    onClick={props.onClear}
+                    className='mt-1'
+                >
+                    <CompassIcon
+                        icon='close-circle-outline'
+                    />
+                </span>
+            }
+        </>
     )
 }
 

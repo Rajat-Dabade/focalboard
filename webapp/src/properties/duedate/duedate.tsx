@@ -186,6 +186,9 @@ const DueDate = (props: PropertyProps): JSX.Element => {
                                           onCancel={() => {
                                               setFromInput(getDisplayDate(dateFrom))
                                           }}
+                                          onClear={() => {
+                                              onRangeClick()
+                                          }}
                                       />
                                   </>}
                                  <Editable
@@ -216,12 +219,6 @@ const DueDate = (props: PropertyProps): JSX.Element => {
                                      }}
                                  />
                              </div>
-                             {numberOfMonths === 2 &&
-                             <Button
-                                 onClick={onRangeClick}
-                             >
-                                 {'Single Date'}
-                             </Button>}
                              <DayPicker
                                  numberOfMonths={numberOfMonths}
                                  onDayClick={handleDayClick}
