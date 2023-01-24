@@ -108,6 +108,15 @@
         }
     }
 
+    .reminder-section {
+        margin-top: 10px;
+        color: rgba(var(--center-channel-color-rgb), 0.56);
+    }
+
+    .reminder-icon {
+        margin-right: 10px;
+    }
+
     .DayPicker {
         font-size: inherit;
     }

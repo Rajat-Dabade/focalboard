@@ -16,6 +16,7 @@ import {PropertyProps} from '../types'
 import './dueDate.scss'
 import ModalWrapper from '../../components/modalWrapper'
 import Modal from '../../components/modal'
+import CompassIcon from '../../widgets/icons/compassIcon'
 import mutator from '../../mutator'
 import Editable from '../../widgets/editable'
 
@@ -85,6 +86,7 @@ const DueDate = (props: PropertyProps): JSX.Element => {
                 from: undefined,
                 to: dateTo?.getTime(),
             })
+            setNumberOfMonths(1)
         }
         saveRangeValue(range)
     }
@@ -140,94 +142,110 @@ const DueDate = (props: PropertyProps): JSX.Element => {
             </Button>
 
             {showDialog &&
-            <ModalWrapper>
-                <Modal
-                    onClose={() => onClose()}
-                >
-                    <div
-                        className={className + '-overlayWrapper'}
-                    >
-                        <div className={className + '-overlay'}>
-                            <div className={'inputContainer'}>
-                                <Button
-                                    onClick={onRangeClick}
-                                    className='add-start-date'
-                                >
-                                    {'+ Add Start date'}
-                                </Button>
-                                {dateFrom &&
+             <ModalWrapper>
+                 <Modal
+                     onClose={() => onClose()}
+                 >
+                     <div
+                         className={className + '-overlayWrapper'}
+                     >
+                         <div className={className + '-overlay'}>
+                             <div className={'inputContainer'}>
+                                 {numberOfMonths === 1 &&
+                                  <Button
+                                      onClick={onRangeClick}
+                                      className='add-start-date'
+                                  >
+                                      {'+ Add Start date'}
+                                  </Button>}
+                                 {dateFrom &&
+                                  <>
+                                      <Editable
+                                          value={fromInput}
+                                          placeholderText={moment.localeData(locale).longDateFormat('L')}
+                                          onFocus={() => {
+                                              if (dateFrom) {
+                                                  return setFromInput(Utils.inputDate(dateFrom, intl))
+                                              }
+                                              return undefined
+                                          }}
+                                          onChange={setFromInput}
+                                          onSave={() => {
+                                              const newDate = MomentLocaleUtils.parseDate(fromInput, 'L', intl.locale)
+                                              if (newDate && DateUtils.isDate(newDate)) {
+                                                  newDate.setHours(12)
+                                                  const range: DateProperty = {
+                                                      from: newDate.getTime(),
+                                                      to: dateTo?.getTime(),
+                                                  }
+                                                  saveRangeValue(range)
+                                              } else {
+                                                  setFromInput(getDisplayDate(dateFrom))
+                                              }
+                                          }}
+                                          onCancel={() => {
+                                              setFromInput(getDisplayDate(dateFrom))
+                                          }}
+                                      />
+                                  </>}
                                  <Editable
-                                     value={fromInput}
+                                     value={toInput}
                                      placeholderText={moment.localeData(locale).longDateFormat('L')}
                                      onFocus={() => {
-                                         if (dateFrom) {
-                                             return setFromInput(Utils.inputDate(dateFrom, intl))
+                                         if (dateTo) {
+                                             return setToInput(Utils.inputDate(dateTo, intl))
                                          }
                                          return undefined
                                      }}
-                                     onChange={setFromInput}
+                                     onChange={setToInput}
                                      onSave={() => {
-                                         const newDate = MomentLocaleUtils.parseDate(fromInput, 'L', intl.locale)
+                                         const newDate = MomentLocaleUtils.parseDate(toInput, 'L', intl.locale)
                                          if (newDate && DateUtils.isDate(newDate)) {
                                              newDate.setHours(12)
                                              const range: DateProperty = {
-                                                 from: newDate.getTime(),
-                                                 to: dateTo?.getTime(),
+                                                 from: dateFrom?.getTime(),
+                                                 to: newDate.getTime(),
                                              }
                                              saveRangeValue(range)
                                          } else {
-                                             setFromInput(getDisplayDate(dateFrom))
+                                             setToInput(getDisplayDate(dateTo))
                                          }
                                      }}
                                      onCancel={() => {
-                                         setFromInput(getDisplayDate(dateFrom))
+                                         setToInput(getDisplayDate(dateTo))
                                      }}
-                                 />}
-                                <Editable
-                                    value={toInput}
-                                    placeholderText={moment.localeData(locale).longDateFormat('L')}
-                                    onFocus={() => {
-                                        if (dateTo) {
-                                            return setToInput(Utils.inputDate(dateTo, intl))
-                                        }
-                                        return undefined
-                                    }}
-                                    onChange={setToInput}
-                                    onSave={() => {
-                                        const newDate = MomentLocaleUtils.parseDate(toInput, 'L', intl.locale)
-                                        if (newDate && DateUtils.isDate(newDate)) {
-                                            newDate.setHours(12)
-                                            const range: DateProperty = {
-                                                from: dateFrom?.getTime(),
-                                                to: newDate.getTime(),
-                                            }
-                                            saveRangeValue(range)
-                                        } else {
-                                            setToInput(getDisplayDate(dateTo))
-                                        }
-                                    }}
-                                    onCancel={() => {
-                                        setToInput(getDisplayDate(dateTo))
-                                    }}
-                                />
-                            </div>
-                            <DayPicker
-                                numberOfMonths={numberOfMonths}
-                                onDayClick={handleDayClick}
-                                initialMonth={dateFrom || new Date()}
-                                showOutsideDays={false}
-                                locale={locale}
-                                localeUtils={MomentLocaleUtils}
-                                todayButton={intl.formatMessage({id: 'DueDate.today', defaultMessage: 'Today'})}
-                                onTodayButtonClick={handleDayClick}
-                                month={dateTo}
-                                selectedDays={[dateFrom ? {from: dateFrom, to: dateTo} : {from: dateTo, to: dateTo}, dateTo]}
-                                modifiers={dateFrom ? {start: dateFrom, end: dateTo} : {start: dateTo, end: dateTo}}
-                            />
-                        </div>
-                    </div>
-                </Modal>
-            </ModalWrapper>
+                                 />
+                             </div>
+                             {numberOfMonths === 2 &&
+                             <Button
+                                 onClick={onRangeClick}
+                             >
+                                 {'Single Date'}
+                             </Button>}
+                             <DayPicker
+                                 numberOfMonths={numberOfMonths}
+                                 onDayClick={handleDayClick}
+                                 initialMonth={dateFrom || new Date()}
+                                 showOutsideDays={false}
+                                 locale={locale}
+                                 localeUtils={MomentLocaleUtils}
+                                 todayButton={intl.formatMessage({id: 'DueDate.today', defaultMessage: 'Today'})}
+                                 onTodayButtonClick={handleDayClick}
+                                 month={dateTo}
+                                 selectedDays={[dateFrom ? {from: dateFrom, to: dateTo} : {from: dateTo, to: dateTo}, dateTo]}
+                                 modifiers={dateFrom ? {start: dateFrom, end: dateTo} : {start: dateTo, end: dateTo}}
+                             />
+                             <div className='reminder-section'>
+                                 <CompassIcon
+                                     icon='bell-outline'
+                                     className='reminder-icon'
+                                 />
+                                 {intl.formatMessage({id: 'DueDate.reminderMessage', defaultMessage: 'The reminder will be sent to all followers on the deu date'})}
+                             </div>
+                         </div>
+                     </div>
+                 </Modal>
+             </ModalWrapper>
             }
         </div>
     )
